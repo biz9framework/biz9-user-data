@@ -63,7 +63,7 @@ class User_Data {
                 //post user
                  async function(call){
                     if(data[User_Type.RESULT_OK_EMAIL] && data[User_Type.RESULT_OK_USER_NAME]){
-                        data = User_Logic.user_clean(data);
+                        data = User_Logic.clean_user(data);
                         data.last_login = DateTime.get();
                         const [biz_error,biz_data] = await Data.post(database,User_Table.USER,data);
                         if(biz_error){
@@ -108,45 +108,42 @@ class User_Data {
             async.series([
                 //check email
                 async function(call){
+                    console.log('1111111111');
                     let search = Data_Logic.get_search(User_Table.USER,{email:data.email},{},1,0);
-                    console.log('111111111');
-                    console.log(Data);
                     const [biz_error,biz_data] = await Data.count(database,search.table,search.filter);
-                    Log.w('qqqq',biz_data);
                     if(biz_error){
                         biz_error=Log.append(error,biz_error);
                     }else{
-                        if(biz_data.count==0){
+                        if(biz_data==0){
                             data[User_Type.RESULT_OK_EMAIL] = true;
                         }
                     }
                 },
                 //check title
                 async function(call){
-                    console.log('2222222222');
                     let search = Data_Logic.get_search(User_Table.USER,{title:data.title},{},1,0);
                     const [biz_error,biz_data] = await Data.count(database,search.table,search.filter);
                     if(biz_error){
                         biz_error=Log.append(error,biz_error);
                     }else{
-                        if(biz_data.count==0){
-                            data[Type.RESULT_OK_USER_NAME] = true;
+                        if(biz_data==0){
+                            data[User_Type.RESULT_OK_USER_NAME] = true;
                         }
                     }
                 },
                 //post user
                 async function(call){
-                    console.log('33333333333');
-                    if(data[Type.RESULT_OK_EMAIL] && data[Type.RESULT_OK_USER_NAME]){
+                    if(data[User_Type.RESULT_OK_EMAIL] && data[User_Type.RESULT_OK_USER_NAME]){
                         data.last_login = DateTime.get();
-                        const [biz_error,biz_data] = await Data.post(database,Type.DATA_USER,data);
+                        data = User_Logic.clean_user(data);
+                        const [biz_error,biz_data] = await Data.post(database,User_Table.USER,data);
                         if(biz_error){
                             biz_error=Log.append(error,biz_error);
                         }else{
                             data = biz_data;
-                            data[Type.RESULT_OK_USER] = true;
-                            data[Type.RESULT_OK_USER_NAME] = true;
-                            data[Type.RESULT_OK_EMAIL] = true;
+                            data[User_Type.RESULT_OK_USER] = true;
+                            data[User_Type.RESULT_OK_USER_NAME] = true;
+                            data[User_Type.RESULT_OK_EMAIL] = true;
                         }
                     }
                 },
@@ -169,19 +166,6 @@ class User_Data {
                         data.device = post_device;
                         const biz_data = await User_Data.get_device(data.device);
                         data.stat = Obj.merge(data.stat,biz_data);
-                    }
-                },
-                //post stat
-                async function(call){
-                    if(data[User_Type.RESULT_OK_EMAIL] && data[User_Type.RESULT_OK_USER_NAME] && option.post_stat && option.post_device || option.post_ip){
-                        let post_stat = Stat_Logic.get(User_Type.DATA_USER,data.id,User_Type.STAT_REGISTER,data.id,data.stat);
-                        let option = {post_unique:false};
-                        const [biz_error,biz_data] = await Stat_Data.post(database,post_stat,option);
-                        if(biz_error){
-                            error=Log.append(error,biz_error);
-                        }else{
-                            stat = biz_data;
-                        }
                     }
                 },
                 */
