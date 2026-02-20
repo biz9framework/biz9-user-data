@@ -176,7 +176,6 @@ class User_Data {
             async.series([
                 //check email,password
                 async function(call){
-                    console.log('111111');
                     let search = Data_Logic.get_search(User_Table.USER,{email:data.email,password:data.password},{},1,0);
                     const [biz_error,biz_data] = await Data.search(database,search.table,search.filter,search.sort_by,search.page_current,search.page_size);
                     if(biz_error){
@@ -190,7 +189,6 @@ class User_Data {
                 },
                 //post user
                 async function(call){
-                    console.log('222222222');
                     if(data[User_Type.RESULT_OK_USER]){
                         data.last_login = DateTime.get();
                         data = User_Logic.clean_user(data);
@@ -208,8 +206,6 @@ class User_Data {
             });
         });
     };
-
-
 }
 module.exports = {
     User_Data
