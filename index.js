@@ -108,7 +108,6 @@ class User_Data {
             async.series([
                 //check email
                 async function(call){
-                    console.log('1111111111');
                     let search = Data_Logic.get_search(User_Table.USER,{email:data.email},{},1,0);
                     const [biz_error,biz_data] = await Data.count(database,search.table,search.filter);
                     if(biz_error){
@@ -147,29 +146,7 @@ class User_Data {
                         }
                     }
                 },
-                /*
-                //get stat - ip - merge
-                async function(call){
-                    if(data[User_Type.RESULT_OK_EMAIL] && data[User_Type.RESULT_OK_USER_NAME] && option.post_ip_address){
-                        data.ip_address = post_ip_address;
-                        data.geo_key = post_geo_key;
-                        const [biz_error,biz_data] = await User_Data.get_ip(data.ip_address,data.geo_key);
-                        if(biz_error){
-                            error=Log.append(error,biz_error);
-                        }
-                        data.stat = Obj.merge(data.stat,biz_data);
-                    }
-                },
-                //get stat - device - merge
-                async function(call){
-                    if(data[User_Type.RESULT_OK_EMAIL] && data[User_Type.RESULT_OK_USER_NAME] && option.post_device){
-                        data.device = post_device;
-                        const biz_data = await User_Data.get_device(data.device);
-                        data.stat = Obj.merge(data.stat,biz_data);
-                    }
-                },
-                */
-            ]).then(result => {
+           ]).then(result => {
                 callback([error,data]);
             }).catch(err => {
                 Log.error("User-Data-Register",err);
@@ -177,6 +154,61 @@ class User_Data {
             });
         });
     };
+    //9_user_login //9_login
+    static login = async (database,post_data,option) => {
+        /* Post Data
+         *  - user / type. obj / ex. {email:myemail@gmail.com,password:my_password} / default. error
+         *  - ip_address / type. string / ex. 123.0.0.1 / default. 0.0.0.0
+         *  - geo_key / type. string / ex. Geo Location Key / default. blank
+         *  - device / type. opj / ex. Geo Location Key / default. blank  / https://www.npmjs.com/package/platform
+         *
+            /* Options
+             * IP Address Information
+             * - post_stat / type. bool / ex.true,false / default. false
+             * - post_ip_address / type. bool / ex.true,false / default. false
+             * - post_device / type. bool / ex.true,false / default. false
+             */
+        return new Promise((callback) => {
+            let error = null;
+            let data = Data_Logic.get(User_Table.USER,0,{data:post_data});;
+            data[User_Type.RESULT_OK_USER] = false;
+            option = !Obj.check_is_empty(option) ? option : {};
+            async.series([
+                //check email,password
+                async function(call){
+                    console.log('111111');
+                    let search = Data_Logic.get_search(User_Table.USER,{email:data.email,password:data.password},{},1,0);
+                    const [biz_error,biz_data] = await Data.search(database,search.table,search.filter,search.sort_by,search.page_current,search.page_size);
+                    if(biz_error){
+                        error=Log.append(error,biz_error);
+                    }else{
+                        if(biz_data[Data_Field.ITEMS].length>0){
+                            data = biz_data[Data_Field.ITEMS][0];
+                            data[User_Type.RESULT_OK_USER] = true;
+                        }
+                    }
+                },
+                //post user
+                async function(call){
+                    console.log('222222222');
+                    if(data[User_Type.RESULT_OK_USER]){
+                        data.last_login = DateTime.get();
+                        data = User_Logic.clean_user(data);
+                        const [biz_error,biz_data] = await Data.post(database,User_Table.USER,data);
+                        if(biz_error){
+                            error=Log.append(error,biz_error);
+                        }
+                    }
+                },
+            ]).then(result => {
+                callback([error,data]);
+            }).catch(err => {
+                Log.error("User-Data-Login",err);
+                callback([err,{}]);
+            });
+        });
+    };
+
 
 }
 module.exports = {

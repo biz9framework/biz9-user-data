@@ -9,6 +9,7 @@ const assert = require('node:assert');
 const {Database,Data}=require("/home/think1/www/doqbox/biz9-framework/biz9-data/source");
 const {User_Logic,User_Field,User_Type,User_Table}=require("/home/think1/www/doqbox/biz9-framework/biz9-user/source");
 const {User_Data}=require("./index");
+const {Data_Logic,Data_Field} = require("/home/think1/www/doqbox/biz9-framework/biz9-data-logic/source");
 const {Log,Str,Obj}=require("/home/think1/www/doqbox/biz9-framework/biz9-utility/source");
 /*
  * availble tests
@@ -45,8 +46,12 @@ describe('connect', function(){ this.timeout(25000);
             async function(call){
                 let print_test = true;
                 let option = {};
-                let user = User_Logic.get_test();
-                const [error,biz_data] = await User_Data.register(database,user,option);
+                //let user = User_Logic.get_test();
+                //let user = User_Logic.get_test({data:{email:'email80560@email.com',password:'1234567'}});
+                let user = Data_Logic.get(User_Table.USER,0,{data:{email:'email80560@email.com',password:'1234567'}});
+                const [error,biz_data] = await User_Data.login(database,user,option);
+
+                //const [error,biz_data] = await User_Data.register(database,user,option);
                 //---
                 if(print_test){;
                     Log.w('99_biz_data',biz_data);
