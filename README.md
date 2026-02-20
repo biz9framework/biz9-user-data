@@ -1,11 +1,11 @@
-# BiZ9 User
+# BiZ9 User-Data
 ** Description
 
 ## Installation
 Use the [npm](https://npm.com) installer to install.
 
 ```bash
-npm i biz9-user
+npm i biz9-user-data
 ```
 
 ## Required

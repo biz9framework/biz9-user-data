@@ -1,4 +1,4 @@
-echo 'BiZ9-User Test'
+echo 'BiZ9-User-Data Test'
 run_test=$1
 echo $run_test
 mocha -g $run_test test.js
