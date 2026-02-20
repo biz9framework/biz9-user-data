@@ -6,8 +6,8 @@ Description: BiZ9 Framework: Data - User
 */
 const async = require('async');
 const assert = require('node:assert');
-const {Log} = require("biz9-utility");
-const {Type} = require("biz9-logic");
+const {Data_Logic,Field,Type,Table}=require("/home/think1/www/doqbox/biz9-framework/biz9-logic/source");
+const {Log,Str,Obj}=require("/home/think1/www/doqbox/biz9-framework/biz9-utility/source");
 /*
  * availble tests
 - connect
@@ -28,10 +28,10 @@ describe('connect', function(){ this.timeout(25000);
                 //-->
                 let print_test = true;
                 //-->
-                //-- BLANK START --//
-                //let parent = Data_Logic.get(Type.DATA_PRODUCT,'929');
+                //-- USER-POST-START --//
+                let user = Data_Logic.get(Table.USER,'929');
                 //const [error,biz_data] = await Portal.get(database,parent.data_type,parent.id,option);
-                //-- BLANK END --//
+                //-- USER-POST-END --//
                 //---
                 if(print_test){;
                     Log.w('99_biz_data',biz_data);
