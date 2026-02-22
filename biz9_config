@@ -1,4 +1,4 @@
-VERSION='1.1.0'
+VERSION='1.1.1'
 TITLE='BiZ9-User-Data'
 REPO='git@github.com:biz9framework/biz9-user-data.git'
-BRANCH='main'
+BRANCH='1.1.1'
