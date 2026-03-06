@@ -46,24 +46,26 @@ describe('connect', function(){ this.timeout(25000);
             async function(call){
                 let print_test = true;
                 // -- USER-REGISTER-START -- //
+                /*
                 let option = {};
                 let post_user = User_Logic.get_test({data:{email:'ceo'+Num.get_id()+'@email.com',password:'1234567'}});
-                delete post_user.title;
-                delete post_user.title_url;
-                const [error,biz_data] = await User_Data.register(database,post_user,option);
-                // -- USER-REGISTER-START -- //
-                //
-                // -- USER-LOGIC-START -- //
+                const [error,biz_data_user] = await User_Data.register(database,post_user,option);
+                const biz_data_user_post = User_Logic.get_clean_user(biz_data_user);
+                */
+                // -- USER-REGISTER-END -- //
+                // -- USER-POST-START -- //
                 /*
+                const [error2,biz_data] = await Data.post(database,biz_data_user_post.table,biz_data_user_post);
+                */
+                // -- USER-POST-END -- //
+                // -- USER-LOGIN-START -- //
+
                 let option = {};
                 //let user = User_Logic.get_test();
                 //let user = User_Logic.get_test({data:{email:'email80560@email.com',password:'1234567'}});
-                let user = Data_Logic.get(User_Table.USER,0,{data:{email:'email80560@email.com',password:'1234567'}});
+                let user = Data_Logic.get(User_Table.USER,0,{data:{email:'email45377@email.com',password:'1234567'}});
                 const [error,biz_data] = await User_Data.login(database,user,option);
-
-                //const [error,biz_data] = await User_Data.register(database,user,option);
-                */
-                // -- USER-REGISTER-START -- //
+                // -- USER-LOGIN-END -- //
 
                 if(print_test){;
                     Log.w('99_biz_data',biz_data);

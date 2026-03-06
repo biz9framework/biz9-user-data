@@ -14,8 +14,8 @@ class User_Data {
     //9_user_register
     static register = async (database,post_user,option) => {
         /* Post Data
-        *  - user / type. obj / ex. {email:myemail@gmail.com,title:my_title} / default. error
-        */
+         *  - user / type. obj / ex. {email:myemail@gmail.com,username:username} / default. error
+         */
         return new Promise((callback) => {
             let error = null;
             let data = User_Logic.get_check_user(post_user);
@@ -33,23 +33,22 @@ class User_Data {
                         }
                     }
                 },
-                //check title (user_name)
+                //check username
                 async function(call){
-                    if(data.title){
-                        data.title = Str.get_title_url(title);
-                        data[User_Type.RESULT_OK_USER_NAME] = data.title.length >= 3 ? true : false;
-                    }else if(data.title && data[User_Type.RESULT_OK_USER_NAME]){
-                    let search = Data_Logic.get_search(User_Table.USER,{title:data.title},{},1,0);
-                    const [biz_error,biz_data] = await Data.count(database,search.table,search.filter);
-                    if(biz_error){
-                        biz_error=Log.append(error,biz_error);
-                    }else{
-                        if(biz_data==0){
-                            data[User_Type.RESULT_OK_USER_NAME] = true;
-                            data[User_Type.RESULT_OK_USER] = true;
+                    if(data.username){
+                        data[User_Type.RESULT_OK_USERNAME] = data.username.length >= 3 ? true : false;
+                    }else if(data.username && data[User_Type.RESULT_OK_USERNAME]){
+                        let search = Data_Logic.get_search(User_Table.USER,{username:data.username},{},1,0);
+                        const [biz_error,biz_data] = await Data.count(database,search.table,search.filter);
+                        if(biz_error){
+                            biz_error=Log.append(error,biz_error);
+                        }else{
+                            if(biz_data==0){
+                                data[User_Type.RESULT_OK_USERNAME] = true;
+                                data[User_Type.RESULT_OK_USER] = true;
+                            }
                         }
                     }
-            }
                 },
                 //check password
                 async function(call){
@@ -60,7 +59,7 @@ class User_Data {
                         data[User_Type.RESULT_OK_USER] = false;
                     }
                 }
-           ]).then(result => {
+            ]).then(result => {
                 callback([error,data]);
             }).catch(err => {
                 Log.error("User-Data-Register",err);
@@ -72,7 +71,7 @@ class User_Data {
     static login = async (database,post_user,option) => {
         /* Post Data
          *  - user / type. obj / ex. {email:myemail@gmail.com,password:my_password} / default. error
-        */
+         */
         return new Promise((callback) => {
             let error = null;
             let data = Data_Logic.get(User_Table.USER,0,{data:post_user});;
@@ -92,18 +91,7 @@ class User_Data {
                         }
                     }
                 },
-                //post user
-                async function(call){
-                    if(data[User_Type.RESULT_OK_USER]){
-                        data.last_login = DateTime.get();
-                        data = User_Logic.clean_user(data);
-                        const [biz_error,biz_data] = await Data.post(database,User_Table.USER,data);
-                        if(biz_error){
-                            error=Log.append(error,biz_error);
-                        }
-                    }
-                },
-            ]).then(result => {
+           ]).then(result => {
                 callback([error,data]);
             }).catch(err => {
                 Log.error("User-Data-Login",err);
